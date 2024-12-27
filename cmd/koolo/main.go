@@ -88,7 +88,7 @@ func main() {
 
 	// Discord Bot initialization
 	if config.Koolo.Discord.Enabled {
-		discordBot, err := discord.NewBot(config.Koolo.Discord.Token, config.Koolo.Discord.ChannelID, manager)
+		discordBot, err := discord.NewBot(config.Koolo.Discord.Token, config.Koolo.Discord.ChannelID, manager, logger)
 		if err != nil {
 			logger.Error("Discord could not been initialized", slog.Any("error", err))
 			return

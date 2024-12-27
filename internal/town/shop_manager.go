@@ -139,7 +139,7 @@ func SellItem(i data.Item) {
 	time.Sleep(500 * time.Millisecond)
 	ctx.HID.ClickWithModifier(game.LeftButton, screenPos.X, screenPos.Y, game.CtrlKey)
 	time.Sleep(500 * time.Millisecond)
-	ctx.Logger.Debug(fmt.Sprintf("Item %s [%s] sold", i.Desc().Name, i.Quality.ToString()))
+	ctx.Logger.Debug(fmt.Sprintf("Item %s [%s] sold", i.Desc().Name, i.Quality.ToString()), "base_stats", i.BaseStats, "stats", i.Stats)
 }
 
 func BuyItem(i data.Item, quantity int) {

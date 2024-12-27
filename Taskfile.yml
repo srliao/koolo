@@ -1,0 +1,9 @@
+version: '3'
+
+tasks:
+  build:
+    cmds:
+      # - cmd: mkdir build
+      #   ignore_error: true
+      - go build -trimpath -tags static --ldflags -extldflags="-static" -ldflags="-s -w -H windowsgui -X 'github.com/hectorgimenez/koolo/internal/config.Version=dev'" -o build/koolo.exe ./cmd/koolo
+    

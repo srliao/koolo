@@ -80,6 +80,16 @@ func (b *Bot) handleStopRequest(s *discordgo.Session, m *discordgo.MessageCreate
 	}
 }
 
+func (b *Bot) sendSupervisorStatus(supervisor string, s *discordgo.Session, m *discordgo.MessageCreate) {
+	status := b.manager.Status(supervisor)
+	if status.SupervisorStatus == bot.NotStarted || status.SupervisorStatus == "" {
+		s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("Supervisor '%s' is offline.", supervisor))
+		return
+	}
+
+	s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("Supervisor '%s' is %s", supervisor, status.SupervisorStatus))
+}
+
 func (b *Bot) handleStatusRequest(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	// Split the message content into words
@@ -92,17 +102,17 @@ func (b *Bot) handleStatusRequest(s *discordgo.Session, m *discordgo.MessageCrea
 				continue
 			}
 
-			status := b.manager.Status(supervisor)
-			if status.SupervisorStatus == bot.NotStarted || status.SupervisorStatus == "" {
-				s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("Supervisor '%s' is offline.", supervisor))
-				continue
-			}
-
-			s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("Supervisor '%s' is %s", supervisor, status.SupervisorStatus))
+			b.sendSupervisorStatus(supervisor, s, m)
 		}
 	} else {
-		// If no supervisors were specified, send a usage message
-		s.ChannelMessageSend(m.ChannelID, "Usage: !status <supervisor1> [supervisor2] ...")
+		supervisors := b.manager.AvailableSupervisors()
+		if len(supervisors) == 0 {
+			s.ChannelMessageSend(m.ChannelID, "No supervisor found")
+			return
+		}
+		for _, supervisor := range supervisors {
+			b.sendSupervisorStatus(supervisor, s, m)
+		}
 	}
 }
 

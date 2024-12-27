@@ -130,6 +130,7 @@ func (s *SinglePlayerSupervisor) Start() error {
 			} else {
 				gameFinishReason = event.FinishedOK
 				event.Send(event.GameFinished(event.Text(s.name, "Game finished successfully"), gameFinishReason))
+				s.bot.ctx.Logger.Info("Game finished sucessfully")
 			}
 
 			if exitErr := s.bot.ctx.Manager.ExitGame(); exitErr != nil {

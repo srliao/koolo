@@ -21,16 +21,20 @@ func (b *Bot) Handle(_ context.Context, e event.Event) error {
 			break
 		}
 
-		buf := new(bytes.Buffer)
-		err := jpeg.Encode(buf, e.Image(), &jpeg.Options{Quality: 80})
-		if err != nil {
-			return err
+		msg := &discordgo.MessageSend{
+			Content: e.Message(),
 		}
 
-		_, err = b.discordSession.ChannelMessageSendComplex(b.channelID, &discordgo.MessageSend{
-			File:    &discordgo.File{Name: "Screenshot.jpeg", ContentType: "image/jpeg", Reader: buf},
-			Content: e.Message(),
-		})
+		if e.Image() != nil {
+			buf := new(bytes.Buffer)
+			err := jpeg.Encode(buf, e.Image(), &jpeg.Options{Quality: 80})
+			if err != nil {
+				return err
+			}
+			msg.File = &discordgo.File{Name: "Screenshot.jpeg", ContentType: "image/jpeg", Reader: buf}
+		}
+
+		_, err := b.discordSession.ChannelMessageSendComplex(b.channelID, msg)
 
 		return err
 	}
@@ -55,6 +59,8 @@ func (b *Bot) shouldPublish(e event.Event) bool {
 		return config.Koolo.Discord.EnableNewRunMessages
 	case event.RunFinishedEvent:
 		return config.Koolo.Discord.EnableRunFinishMessages
+	case event.ItemStashedEvent:
+		return true
 	default:
 		break
 	}

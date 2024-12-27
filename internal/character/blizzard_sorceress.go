@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	sorceressMaxAttacksLoop = 40
+	sorceressMaxAttacksLoop = 200
 	blizzMinDistance        = 8
 	blizzMaxDistance        = 20
 	LSMinDistance           = 6
