@@ -6,7 +6,6 @@ import (
 	"log/slog"
 	"slices"
 	"strconv"
-	"strings"
 
 	"github.com/hectorgimenez/d2go/pkg/data"
 	"github.com/hectorgimenez/d2go/pkg/data/area"
@@ -285,15 +284,8 @@ func stashItemAction(i data.Item, rule string, ruleFile string, skipLogging bool
 	// Don't log items that we already have in inventory during first run
 	if !skipLogging {
 		// i don't want to get pinged on pgem crap
-		switch {
-		case strings.Contains(string(i.Name), "Amethyst"):
-		case strings.Contains(string(i.Name), "Diamond"):
-		case strings.Contains(string(i.Name), "Emerald"):
-		case strings.Contains(string(i.Name), "Ruby"):
-		case strings.Contains(string(i.Name), "Sapphire"):
-		case strings.Contains(string(i.Name), "Skull"):
-		case strings.Contains(string(i.Name), "Topaz"):
-		default:
+		filtered := (i.ID >= 557 && i.ID <= 600) || (i.ID >= 597 && i.ID <= 601)
+		if !filtered {
 			event.Send(
 				event.ItemStashed(
 					event.WithScreenshot(ctx.Name, fmt.Sprintf("%s [%v] stashed", i.Name, i.Quality.ToString()), screenshot),
