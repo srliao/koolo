@@ -87,33 +87,9 @@ func (s MosaicSin) KillMonsterSequence(
 			return nil
 		}
 
-		// Tiger Strike - 3 charges
-		if ctx.CharacterCfg.Character.MosaicSin.UseTigerStrike {
-			if !s.Data.PlayerUnit.States.HasState(state.Tigerstrike) || (foundTiger && tigerCharges.Value < 3) {
-				step.SecondaryAttack(skill.TigerStrike, id, 1)
-				continue
-			}
-		}
-
-		if !s.MobAlive(id, *s.Data) {
-			return nil
-		}
-
-		// Cobra Strike - 3 charges
-		if ctx.CharacterCfg.Character.MosaicSin.UseCobraStrike {
-			if !s.Data.PlayerUnit.States.HasState(state.Cobrastrike) || (foundCobra && cobraCharges.Value < 3) {
-				step.SecondaryAttack(skill.CobraStrike, id, 1)
-				continue
-			}
-		}
-
-		if !s.MobAlive(id, *s.Data) {
-			return nil
-		}
-
 		// Phoenix Strike - 2 charges
 		if !s.Data.PlayerUnit.States.HasState(state.Phoenixstrike) || (foundPhoenix && phoenixCharges.Value < 2) {
-			step.SecondaryAttack(skill.PhoenixStrike, id, 1)
+			step.SecondaryAttack(skill.PhoenixStrike, id, 2-phoenixCharges.Value)
 			continue
 		}
 
@@ -124,7 +100,7 @@ func (s MosaicSin) KillMonsterSequence(
 		// Claws of Thunder - 3 charges
 		if ctx.CharacterCfg.Character.MosaicSin.UseClawsOfThunder {
 			if !s.Data.PlayerUnit.States.HasState(state.Clawsofthunder) || (foundClaws && clawsCharges.Value < 3) {
-				step.SecondaryAttack(skill.ClawsOfThunder, id, 1)
+				step.SecondaryAttack(skill.ClawsOfThunder, id, 3-clawsCharges.Value)
 				continue
 			}
 		}
@@ -136,15 +112,7 @@ func (s MosaicSin) KillMonsterSequence(
 		// Blades of Ice - 3 charges
 		if ctx.CharacterCfg.Character.MosaicSin.UseBladesOfIce {
 			if !s.Data.PlayerUnit.States.HasState(state.Bladesofice) || (foundBlades && bladesCharges.Value < 3) {
-				step.SecondaryAttack(skill.BladesOfIce, id, 1)
-				continue
-			}
-		}
-
-		// First of Fire - 3 charges
-		if ctx.CharacterCfg.Character.MosaicSin.UseFistsOfFire {
-			if !s.Data.PlayerUnit.States.HasState(state.Fistsoffire) || (foundFirst && firstCharges.Value < 3) {
-				step.SecondaryAttack(skill.FistsOfFire, id, 1)
+				step.SecondaryAttack(skill.BladesOfIce, id, 3-bladesCharges.Value)
 				continue
 			}
 		}
@@ -154,6 +122,49 @@ func (s MosaicSin) KillMonsterSequence(
 		}
 
 		opts := step.Distance(1, 2)
+		// Finish it off with primary attack
+		step.PrimaryAttack(id, 1, false, opts)
+
+		if !s.MobAlive(id, *s.Data) {
+			return nil
+		}
+
+		// Tiger Strike - 3 charges
+		if ctx.CharacterCfg.Character.MosaicSin.UseTigerStrike {
+			if !s.Data.PlayerUnit.States.HasState(state.Tigerstrike) || (foundTiger && tigerCharges.Value < 3) {
+				step.SecondaryAttack(skill.TigerStrike, id, 3-tigerCharges.Value)
+				continue
+			}
+		}
+
+		if !s.MobAlive(id, *s.Data) {
+			return nil
+		}
+
+		// Cobra Strike - 3 charges
+		if ctx.CharacterCfg.Character.MosaicSin.UseCobraStrike {
+			if !s.Data.PlayerUnit.States.HasState(state.Cobrastrike) || (foundCobra && cobraCharges.Value < 3) {
+				step.SecondaryAttack(skill.CobraStrike, id, 3-cobraCharges.Value)
+				continue
+			}
+		}
+
+		if !s.MobAlive(id, *s.Data) {
+			return nil
+		}
+
+		// First of Fire - 3 charges
+		if ctx.CharacterCfg.Character.MosaicSin.UseFistsOfFire {
+			if !s.Data.PlayerUnit.States.HasState(state.Fistsoffire) || (foundFirst && firstCharges.Value < 3) {
+				step.SecondaryAttack(skill.FistsOfFire, id, 3-firstCharges.Value)
+				continue
+			}
+		}
+
+		if !s.MobAlive(id, *s.Data) {
+			return nil
+		}
+
 		// Finish it off with primary attack
 		step.PrimaryAttack(id, 1, false, opts)
 	}
